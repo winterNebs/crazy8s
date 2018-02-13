@@ -12,14 +12,21 @@ Special Cards:
 Jack, any suit: Reverse table order
 Queen, spades: Pickup 5, same rules as 2
  */
+
+/* Player Name:
+ * Hand:
+ * Pickup/skip
+ * Next Players:
+ * */
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -27,39 +34,57 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 /*TODO:
- * - Gui
- * 2s?
  */
 import java.util.Collections;
 public class Crazy8 extends JFrame{
 	//Declaring some constants
-	public final static int HAND_SIZE = 8;
-	public final static int PLAYER_COUNT = 3;
-	public final static int DECK_SIZE = 52;
+	private final static int HAND_SIZE = 8;
+	private final static int PLAYER_COUNT = 3;
+	private final static int DECK_SIZE = 52;
 	//Declaring pickup counter, and the deck, cards on table, and players
-	public int pickup = 0;
-	public Deck deck1;
-	public Deck table;
-	public ArrayList<Player> players = new ArrayList<Player>();
-	public JPanel cardArea;
-	public JPanel currentCard;
-	public JPanel playerList;
-	public boolean drew = false;
-	public BorderLayout layout = new BorderLayout();
+	private int pickup = 0;
+	private Deck deck1;
+	private Deck table;
+	private ArrayList<Player> players = new ArrayList<Player>();
+	private JPanel cardArea;
+	private JPanel hands;
+	private JPanel buttons;
+	private JPanel currentCard;
+	private JPanel playerList;
+	private JPanel title;
+	private ArrayList<JPanel> panels = new ArrayList<JPanel>();
+	private boolean drew = false;
+	private BorderLayout layout = new BorderLayout();
 	public static void main(String args[]){
 		//System.out.println(deck1.Output());
 		Crazy8 game = new Crazy8();
 	}
-	public Crazy8() {
+	private Crazy8() {
 		super("Crazy 8s");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setSize(1280,720);
 		for(int i = 0; i < PLAYER_COUNT; i++){
 			players.add(new Player("Player " + i));		//initializing players
 		}
-		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
-		cardArea = new JPanel(layout);
-		currentCard = new JPanel();
+		GridLayout vertGrid = new GridLayout();
+		vertGrid.setColumns(1);
+		vertGrid.setRows(0);
+		this.getContentPane().setLayout(vertGrid);
+		panels.add(cardArea = new JPanel(new FlowLayout()));
+		panels.add(currentCard = new JPanel(new FlowLayout()));
+		GridLayout fourGrid = new GridLayout();
+		fourGrid.setColumns(8);
+		fourGrid.setRows(1);
+		fourGrid.setVgap(8);
+		fourGrid.setHgap(8);
+		hands = new JPanel();
+		hands.setLayout(fourGrid);
+		panels.add(hands);
+		panels.add(buttons = new JPanel(new FlowLayout()));
+		panels.add(title = new JPanel(new FlowLayout()));
+		cardArea.add(title);
+		cardArea.add(hands);
+		cardArea.add(buttons);
 		this.add(cardArea);
 		this.add(currentCard);
 		this.pack();
@@ -72,38 +97,38 @@ public class Crazy8 extends JFrame{
 	public void paint(Graphics g) {
 		super.paint(g);	
 	}
-	public void update() {	
+	private void update() {	
 		System.out.println("Table size: " + table.getSize());
 		System.out.println(currentPlayer().showHand());
 		System.out.println("Pick up:" + pickup);
 		for(int i = 0; i < currentPlayer().hand.getSize(); i++) {
 			currentPlayer().hand.getCard(i).playable = checkCard(currentPlayer().hand.getCard(i));
 		}
-		cardArea.removeAll();
-		cardArea.add(new JLabel(currentPlayer().name +"'s hand: "));
+		title.removeAll();
+		title.add(new JLabel(currentPlayer().name +"'s hand: "));
 		currentCard.removeAll();
-		currentCard.setLayout(new FlowLayout());
 		currentCard.add(new JLabel("Current Card:"));
-		currentCard.add( new JLabel(new ImageIcon(table.last().cardImage())));
+		currentCard.add(new JLabel(new ImageIcon(table.last().cardImage())));
+		buttons.removeAll();
+		hands.removeAll();
 		boolean hasCards = false;
 		for(int i = 0; i < currentPlayer().hand.getSize(); i++) {
 			JLabel card = new JLabel(new ImageIcon(currentPlayer().hand.getCard(i).cardImage()));
-			hasCards = hasCards || currentPlayer().hand.getCard(i).playable; //See if has any playble cards
+			hasCards = hasCards || currentPlayer().hand.getCard(i).playable; //See if has any playable cards
 			card.setName(i+"");
 			if(currentPlayer().hand.getCard(i).playable) {
 				card.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						if(Integer.parseInt(((JLabel)e.getSource()).getName()) >= 0 || Integer.parseInt(((JLabel)e.getSource()).getName()) < currentPlayer().hand.getSize()) {
-							playCard(Integer.parseInt(((JLabel)e.getSource()).getName()));
-							//cardArea.remove(Integer.parseInt(((JLabel)e.getSource()).getName())+1);						
+							playCard(Integer.parseInt(((JLabel)e.getSource()).getName()));				
 							update();
 						}
 						System.out.println(((JLabel)e.getSource()).getName());       
 					}
 				});			
 			}
-			cardArea.add(card);
+			hands.add(card);
 		}
 		System.out.println("Has card: " + hasCards);
 		JLabel pickupCard = new JLabel("Pick up card");
@@ -125,7 +150,7 @@ public class Crazy8 extends JFrame{
 				update();
 			}
 		});
-		cardArea.add(pickupCard);
+		buttons.add(pickupCard);
 		if(drew) {
 			JLabel skipTurn = new JLabel("Skip Turn");
 			skipTurn.setBackground(new Color(100,100,100,100));
@@ -137,13 +162,18 @@ public class Crazy8 extends JFrame{
 					update();
 				}
 			});
-			cardArea.add(skipTurn);
+			buttons.add(skipTurn);
 		}
+		for(JPanel i: panels) {
+			i.revalidate();
+			//i.getLayout().
+			i.repaint();
+		}		
 		revalidate();
 		repaint();
 	}
 
-	public void newRound(){		//Resets the table
+	private void newRound(){		//Resets the table
 		deck1 = new Deck(DECK_SIZE);
 		deck1.shuffle();							//Creates a new shuffled deck, throws out the old cards on the table.
 		table = new Deck(0);
@@ -156,7 +186,7 @@ public class Crazy8 extends JFrame{
 		}
 		table.cards.add(deck1.deal());
 	}
-	public void playCard(int i) {
+	private void playCard(int i) {
 		boolean skip = false;
 		switch(currentPlayer().hand.getCard(i).number+1){
 		case 2:
@@ -189,7 +219,7 @@ public class Crazy8 extends JFrame{
 			nextTurn();
 		}
 	}
-	public boolean checkCard(Card a) {
+	private boolean checkCard(Card a) {
 		if(pickup > 0) {
 			if(table.last().number == 2 && a.number == 2) {
 				return true;
@@ -206,10 +236,10 @@ public class Crazy8 extends JFrame{
 		}
 		return (table.last().number == a.number || table.last().suit == a.suit);
 	}
-	public Player currentPlayer() {
+	private Player currentPlayer() {
 		return players.get(0);
 	}
-	public boolean roundOver(){
+	private boolean roundOver(){
 		for(Player p : players) {
 			if(p.hand.getSize() == 0) {
 				JOptionPane.showMessageDialog(null, p.name);
@@ -218,7 +248,7 @@ public class Crazy8 extends JFrame{
 		}
 		return false;
 	}
-	public void tableSwap() {
+	private void tableSwap() {
 		if(deck1.getSize() == 0) {
 			for(int i = 0; i < table.getSize()-1; i++) {
 				deck1.cards.add(table.deal());
@@ -226,7 +256,7 @@ public class Crazy8 extends JFrame{
 			}
 		}
 	}
-	public void nextTurn(){
+	private void nextTurn(){
 		drew = false;
 		players.add(currentPlayer());		//Rotates the players around the table. 
 		players.remove(0);

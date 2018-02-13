@@ -11,14 +11,14 @@ import javax.imageio.ImageIO;
 //Card class, with suit and number
 public class Card{
 	//Variables
-	static final int SPRITE_SIZE = 32;
-	static final int COLS = 17;
-	static final int CARD_WIDTH = 128;
-	static final int CARD_HEIGHT = 192;
+	private static final int SPRITE_SIZE = 32;
+	private static final int COLS = 17;
+	private static final int CARD_WIDTH = 128;
+	private static final int CARD_HEIGHT = 192;
 	
-	static BufferedImage spriteSheet;
-	static BufferedImage[] suits = new BufferedImage[Deck.MAX_SUIT_VAL];
-	static BufferedImage[] nums = new BufferedImage[Deck.MAX_CARD_VAL];
+	private static BufferedImage spriteSheet;
+	private static BufferedImage[] suits = new BufferedImage[Deck.MAX_SUIT_VAL];
+	private static BufferedImage[] nums = new BufferedImage[Deck.MAX_CARD_VAL];
 	public int number;
 	public int suit;
 	public boolean playable;
@@ -73,7 +73,7 @@ public class Card{
 	public BufferedImage cardImage() {
 		BufferedImage fullCard = new BufferedImage(CARD_WIDTH,CARD_HEIGHT,BufferedImage.TYPE_INT_ARGB);
 		Graphics g = fullCard.getGraphics();
-		g.setColor(new Color(100,100,0));
+		g.setColor(Color.YELLOW);
 		g.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 		g.drawImage(nums(),0,0,null);
 		g.drawImage(suits(),0,SPRITE_SIZE,null);
