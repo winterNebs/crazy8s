@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -82,5 +83,8 @@ public class Card{
 			g.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 		}
 		return fullCard;
+	}
+	public static Dimension prefSize() {
+		return new Dimension(CARD_WIDTH, CARD_HEIGHT);
 	}
 }

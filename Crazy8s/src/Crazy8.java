@@ -28,6 +28,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,6 +42,7 @@ public class Crazy8 extends JFrame{
 	private final static int HAND_SIZE = 8;
 	private final static int PLAYER_COUNT = 3;
 	private final static int DECK_SIZE = 52;
+	private final static int GAP = 4;
 	//Declaring pickup counter, and the deck, cards on table, and players
 	private int pickup = 0;
 	private Deck deck1;
@@ -66,51 +68,38 @@ public class Crazy8 extends JFrame{
 		for(int i = 0; i < PLAYER_COUNT; i++){
 			players.add(new Player("Player " + i));		//initializing players
 		}
-		GridLayout vertGrid = new GridLayout();
-		vertGrid.setColumns(1);
-		vertGrid.setRows(0);
-		this.getContentPane().setLayout(vertGrid);
-		panels.add(cardArea = new JPanel(new FlowLayout()));
-		panels.add(currentCard = new JPanel(new FlowLayout()));
-		GridLayout fourGrid = new GridLayout();
-		fourGrid.setColumns(8);
-		fourGrid.setRows(1);
-		fourGrid.setVgap(8);
-		fourGrid.setHgap(8);
-		hands = new JPanel();
-		hands.setLayout(fourGrid);
-		panels.add(hands);
-		panels.add(buttons = new JPanel(new FlowLayout()));
-		panels.add(title = new JPanel(new FlowLayout()));
-		cardArea.add(title);
-		cardArea.add(hands);
-		cardArea.add(buttons);
-		this.add(cardArea);
-		this.add(currentCard);
-		this.pack();
-		this.setVisible(true);
-		this.setSize(1280,720);
+		initGUI();
 		newRound();		//Resets table
 		Card.init();
 		update();
 	}
-	public void paint(Graphics g) {
-		super.paint(g);	
+	private void initGUI() {
+		this.getContentPane().setLayout(new GridLayout(0,1,GAP,GAP));
+		panels.add(hands = new JPanel(new GridLayout(0,8,GAP,GAP)));
+		panels.add(currentCard = new JPanel(new FlowLayout()));
+		panels.add(buttons = new JPanel(new FlowLayout()));
+		panels.add(title = new JPanel(new FlowLayout()));
+		panels.add(cardArea = new JPanel(new GridLayout(0,1,GAP,GAP)));
+
+	}
+	private void clearGUI() {
+		title.removeAll();
+		currentCard.removeAll();
+		buttons.removeAll();
+		hands.removeAll();
+		//this.setVisible(false);
 	}
 	private void update() {	
 		System.out.println("Table size: " + table.getSize());
 		System.out.println(currentPlayer().showHand());
 		System.out.println("Pick up:" + pickup);
+		clearGUI();
 		for(int i = 0; i < currentPlayer().hand.getSize(); i++) {
 			currentPlayer().hand.getCard(i).playable = checkCard(currentPlayer().hand.getCard(i));
 		}
-		title.removeAll();
 		title.add(new JLabel(currentPlayer().name +"'s hand: "));
-		currentCard.removeAll();
 		currentCard.add(new JLabel("Current Card:"));
 		currentCard.add(new JLabel(new ImageIcon(table.last().cardImage())));
-		buttons.removeAll();
-		hands.removeAll();
 		boolean hasCards = false;
 		for(int i = 0; i < currentPlayer().hand.getSize(); i++) {
 			JLabel card = new JLabel(new ImageIcon(currentPlayer().hand.getCard(i).cardImage()));
@@ -141,11 +130,14 @@ public class Crazy8 extends JFrame{
 				/// FORCE DRAW SKIP TURN
 				if(pickup > 0) {
 					for(int i = 0; i < pickup; i++) {
+						tableSwap();
 						currentPlayer().hand.cards.add(deck1.deal()); 	
 					}
+					pickup = 0;
 					nextTurn();
 					update();
 				}
+				tableSwap();
 				currentPlayer().hand.cards.add(deck1.deal()); 				
 				update();
 			}
@@ -164,15 +156,28 @@ public class Crazy8 extends JFrame{
 			});
 			buttons.add(skipTurn);
 		}
-		for(JPanel i: panels) {
-			i.revalidate();
-			//i.getLayout().
-			i.repaint();
-		}		
-		revalidate();
-		repaint();
+		resetGUI();
+		roundOver();
 	}
+	private void resetGUI() {
+		cardArea.add(title);
+		cardArea.add(hands);
+		cardArea.add(buttons);
+		this.add(cardArea);
+		this.add(currentCard);
+		System.out.println(this.getComponentCount());
+		for(JPanel i: panels) {
+			i.setVisible(true);
+			i.revalidate();
+			i.repaint();
+			System.out.println(i + " | after : " + i.getMinimumSize() + " , " + i.getPreferredSize() + " /" + i.getSize());
 
+		}		
+		this.revalidate();
+		this.repaint();
+		this.pack();
+		this.setVisible(true);
+	}
 	private void newRound(){		//Resets the table
 		deck1 = new Deck(DECK_SIZE);
 		deck1.shuffle();							//Creates a new shuffled deck, throws out the old cards on the table.
