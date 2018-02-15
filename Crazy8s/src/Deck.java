@@ -21,10 +21,10 @@ public class Deck{	//Deck is an array of cards
 			cards.add(new Card(i%MAX_CARD_VAL,i%MAX_SUIT_VAL));			//Does some fancy math (counts 1-13 for number,and 1-4 for suits)
 		}
 	}
-	public void Empty(){		//Empty deck
+	public void empty(){		//Empty deck
 		cards.clear();
 	}
-	public String Output(){		//Outputs all the cards nicely, using the card format for each card
+	public String output(){		//Outputs all the cards nicely, using the card format for each card
 		String out = ""; 
 		for(int i = 0; i < cards.size(); i++){
 			out += cards.get(i).formatter();
@@ -36,7 +36,7 @@ public class Deck{	//Deck is an array of cards
 		for(int i = 0; i < cards.size(); i++){
 			old.add(new Card(cards.get(i).number,cards.get(i).suit));
 		}
-		Empty();
+		empty();
 		for(int i = old.size(); i > 0; i--){
 			int random = (int) (Math.random() * i);
 			cards.add(new Card(old.get(random).number,old.get(random).suit));

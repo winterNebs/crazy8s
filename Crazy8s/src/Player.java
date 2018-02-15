@@ -6,13 +6,16 @@ public class Player {
 	//Variables
 	public Deck hand;
 	public String name;
+	public int wins;
 	public Player(){	//Default cnstructor
 		name = "default";
 		hand = new Deck(0);
+		wins = 0;
 	}
 	public Player(String s){	//Constructor with settable name
 		name = s;
 		hand = new Deck(0);
+		wins = 0;
 	}
 	
 	public String showHand(){		//Nicely formats the cards in their hand(Deck)
