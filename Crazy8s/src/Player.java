@@ -7,7 +7,7 @@ public class Player {
 	public Deck hand;
 	public String name;
 	public int wins;
-	public Player(){	//Default cnstructor
+	public Player(){	//Default constructor
 		name = "default";
 		hand = new Deck(0);
 		wins = 0;

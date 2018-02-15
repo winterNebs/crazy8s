@@ -44,7 +44,7 @@ public class Deck{	//Deck is an array of cards
 		
 		}
 	}
-	public Card getCard(int i) {
+	public Card getCard(int i) {	//Returns the card, (Easier than typing myDeck.cards....)
 		return cards.get(i);
 	}
 	public int getSize() {

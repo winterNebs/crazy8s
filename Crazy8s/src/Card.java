@@ -8,15 +8,12 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 //Isaac Wen
-//2017-03-09
-//Card class, with suit and number
+//2018-02-15
+//Card class, with suit and number, and image
 public class Card{
-	//Variables
-	private static final int SPRITE_SIZE = 32;
-	private static final int COLS = 17;
+	private static final int SPRITE_SIZE = 32; 	//Consts for the sprite sheet
 	private static final int CARD_WIDTH = 128;
 	private static final int CARD_HEIGHT = 192;
-	
 	private static BufferedImage spriteSheet;
 	private static BufferedImage[] suits = new BufferedImage[Deck.MAX_SUIT_VAL];
 	private static BufferedImage[] nums = new BufferedImage[Deck.MAX_CARD_VAL];
@@ -51,13 +48,13 @@ public class Card{
 		}
 		return out;
 	}
-	public static void init(){
+	public static void init(){			//Initializes the sprite sheet
 		try {
-			spriteSheet = ImageIO.read(new File("CardSprite.png"));
-			for (int i = 0; i < suits.length; i++) {
+			spriteSheet = ImageIO.read(new File("CardSprite.png"));		//Tries to find the sprite sheet
+			for (int i = 0; i < suits.length; i++) {					//Divides the first 4 images into separate images
 		        suits[i] = spriteSheet.getSubimage(i * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE);
 			}
-			for (int i = 0; i < nums.length; i++) {
+			for (int i = 0; i < nums.length; i++) {						//Same but for all the numbers
 		        nums[i] = spriteSheet.getSubimage((i+suits.length) * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE);
 			}
 		}
@@ -65,13 +62,13 @@ public class Card{
 			System.out.println("imgerror");
 		}
 	}
-	public BufferedImage nums() {
-		return nums[number];
+	private BufferedImage nums() {
+		return nums[number];		//Returns the array of images that are numbers
 	}
-	public BufferedImage suits() {
-		return suits[suit];
+	private BufferedImage suits() {
+		return suits[suit];			//Returns the array of images that are suits
 	}
-	public BufferedImage cardImage() {
+	public BufferedImage cardImage() {//Creates a card from the sprites
 		BufferedImage fullCard = new BufferedImage(CARD_WIDTH,CARD_HEIGHT,BufferedImage.TYPE_INT_ARGB);
 		Graphics g = fullCard.getGraphics();
 		g.setColor(Color.YELLOW);
@@ -83,8 +80,5 @@ public class Card{
 			g.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 		}
 		return fullCard;
-	}
-	public static Dimension prefSize() {
-		return new Dimension(CARD_WIDTH, CARD_HEIGHT);
 	}
 }
