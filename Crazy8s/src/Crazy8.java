@@ -295,6 +295,7 @@ public class Crazy8 extends JFrame{
 		}
 		catch(IndexOutOfBoundsException e) {
 			System.out.println(e);										//At some point this threw an error for no reason, I believe that the size would get out of sync or something, but it hasn't thrown anything since I put the try catch
+		e.printStackTrace();
 		}
 		nextTurn();				//Cycles next turn
 		if(skip) {
