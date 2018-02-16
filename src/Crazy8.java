@@ -277,7 +277,9 @@ public class Crazy8 extends JFrame{
 			}
 			break;
 		case 11:							//Jack, any suit = reverse players
+			Player current = players.remove(0);
 			Collections.reverse(players);
+			players.add(0, current);
 			break;
 		case 12:							//Queen, spades = pickup 5
 			if(currentPlayer().hand.getCard(i).suit == 0) {
@@ -285,18 +287,12 @@ public class Crazy8 extends JFrame{
 			}
 			break;
 		}
-		try {
-			System.out.println("Picked: " + i);
-			System.out.println("Hand size: " + currentPlayer().hand.getSize() + " " + currentPlayer().name);
-			System.out.println("Played: " + currentPlayer().hand.cards.get(i).formatter());
-			System.out.println(currentPlayer().hand.output());
-			currentPlayer().hand.cards.get(i).playable = true;			//Reset playability of card
-			table.cards.add(currentPlayer().hand.cards.remove(i));		//Remove card from hand and add it to the table;
-		}
-		catch(IndexOutOfBoundsException e) {
-			System.out.println(e);										//At some point this threw an error for no reason, I believe that the size would get out of sync or something, but it hasn't thrown anything since I put the try catch
-		e.printStackTrace();
-		}
+		System.out.println("Picked: " + i);
+		System.out.println("Hand size: " + currentPlayer().hand.getSize() + " " + currentPlayer().name);
+		System.out.println("Played: " + currentPlayer().hand.cards.get(i).formatter());
+		System.out.println(currentPlayer().hand.output());
+		currentPlayer().hand.cards.get(i).playable = true;			//Reset playability of card
+		table.cards.add(currentPlayer().hand.cards.remove(i));		//Remove card from hand and add it to the table;
 		nextTurn();				//Cycles next turn
 		if(skip) {
 			nextTurn();			//If the next player is skipped skip twice
