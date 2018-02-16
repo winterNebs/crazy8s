@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +13,8 @@ import javax.imageio.ImageIO;
 //2018-02-15
 //Card class, with suit and number, and image
 public class Card{
-	private static final int SPRITE_SIZE = 32; 	//Consts for the sprite sheet
+	private static final int SPRITE_SIZE = 200; 	//Consts for the sprite sheet
+	private static final int SPRITE_DISPLAY_SIZE = 30;
 	private static final int CARD_WIDTH = 128;
 	private static final int CARD_HEIGHT = 192;
 	private static BufferedImage spriteSheet;
@@ -69,14 +72,20 @@ public class Card{
 		return suits[suit];			//Returns the array of images that are suits
 	}
 	public BufferedImage cardImage() {//Creates a card from the sprites
+        AffineTransform at = new AffineTransform();		//THis is for the mirrored cards
+        at.rotate(Math.PI, CARD_WIDTH/2, CARD_HEIGHT/2);
+        at.scale((double)SPRITE_DISPLAY_SIZE/SPRITE_SIZE,(double)SPRITE_DISPLAY_SIZE/SPRITE_SIZE);
 		BufferedImage fullCard = new BufferedImage(CARD_WIDTH,CARD_HEIGHT,BufferedImage.TYPE_INT_ARGB);
-		Graphics g = fullCard.getGraphics();
-		g.setColor(Color.YELLOW);
+		Graphics2D g = (Graphics2D) fullCard.getGraphics();
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
-		g.drawImage(nums(),0,0,null);
-		g.drawImage(suits(),0,SPRITE_SIZE,null);
-		if(!playable) {
-			g.setColor(new Color(0,0,0,170));
+		g.drawImage(nums(),0,0,SPRITE_DISPLAY_SIZE,SPRITE_DISPLAY_SIZE,null);
+		g.drawImage(suits(),0,SPRITE_DISPLAY_SIZE,SPRITE_DISPLAY_SIZE,SPRITE_DISPLAY_SIZE,null);
+		g.drawImage(nums(),at,null);
+		at.translate(0, SPRITE_SIZE);
+		g.drawImage(suits(),at,null);
+		if(!playable) {							//Adds grayed out color if unplayable
+			g.setColor(new Color(0,0,0,100));
 			g.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 		}
 		return fullCard;

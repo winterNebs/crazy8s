@@ -79,7 +79,7 @@ public class Crazy8 extends JFrame{
 	private void addPlayer() {
 		String input = JOptionPane.showInputDialog(		//Asks for first player name
 				game, "Enter new player's name", "New Player", JOptionPane.WARNING_MESSAGE);
-		if(input.isEmpty() || input == null) {
+		if((input == null)||input.isEmpty()) {
 			players.add(new Player("Player " + players.size()));	//Add selected 
 		}
 		else {
