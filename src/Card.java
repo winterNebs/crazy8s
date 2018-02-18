@@ -1,12 +1,8 @@
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 //Isaac Wen
@@ -53,7 +49,7 @@ public class Card{
 	}
 	public static void init(){			//Initializes the sprite sheet
 		try {
-			spriteSheet = ImageIO.read(new File("CardSprite.png"));		//Tries to find the sprite sheet
+			spriteSheet = ImageIO.read(Card.class.getResourceAsStream("/img/CardSprite.png"));		//Tries to find the sprite sheet
 			for (int i = 0; i < suits.length; i++) {					//Divides the first 4 images into separate images
 		        suits[i] = spriteSheet.getSubimage(i * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE);
 			}
